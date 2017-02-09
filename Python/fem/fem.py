@@ -32,8 +32,8 @@ class FEM():
             elif type(e) == KeyboardInterrupt or type(e) == SystemExit:
                 print('')
                 exit(1)
+                
     def calculate(self): 
- 
         for i in range(0, 90): 
             line = [self.bound[0]]             
             if not self.result: 
