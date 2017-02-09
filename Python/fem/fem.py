@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 class FEM(): 
     """docstring for FEM""" 
     def __init__(self, l, m): 
@@ -8,8 +10,9 @@ class FEM():
         self.tal = self.dt/self.dx**2 
         self.bound = [1, 0, 0] 
         self.result = [] 
+        self.it = 0
  
-    def setboundary(self):
+    def set_boundary(self):
         try:
             self.bound.append(int(input('Digite a condição T(0,t): ')))
             self.bound.append(int(input('Digite a condição T(1,t): ')))
@@ -22,19 +25,19 @@ class FEM():
                 print('')
                 exit(1)
 
-    def setit(self):
+    def set_it(self):
         try:
             self.it = int(input('Digite o numero de iterações: '))
         except (KeyboardInterrupt, SystemExit, ValueError) as e:
             if type(e) == ValueError:
                 print('Erro: Digite um número')
-                get_info()            
+                self.set_it()
             elif type(e) == KeyboardInterrupt or type(e) == SystemExit:
                 print('')
                 exit(1)
-                
+
     def calculate(self): 
-        for i in range(0, 90): 
+        for i in range(0, self.it): 
             line = [self.bound[0]]             
             if not self.result: 
                 self.result.append([]) 
@@ -44,13 +47,25 @@ class FEM():
                 self.result[0].append(self.bound[1]) 
             else: 
                 for x in range(1, self.m-1): 
-                    t = self.tal*self.bound[0] + (1-2*self.tal)*self.result[i-1][x] + self.tal*self.result[i-1][x+1] 
+                    t = self.tal*self.result[i-1][x-1] + (1-2*self.tal)*self.result[i-1][x] + self.tal*self.result[i-1][x+1] 
                     line.append(t) 
                 line.append(self.bound[1]) 
                 self.result.append(line) 
  
         return self.result 
- 
+    
+    def get_times(self):
+        dt = self.dx**2/2
+        for i in range(self.it):
+            times.append(i*dt)
+        return times
+
+    def get_xs(self):
+        x = []
+        for i in range(self.m):
+            x.append(i*self.dx)
+        return x
+
 def get_info():
     try:
         l = int(input('Digite o comprimento da placa: '))
@@ -63,15 +78,14 @@ def get_info():
             print('')
             exit(1)
     return (l, m)
-    return get_info()
 
 if __name__ == '__main__': 
     info = get_info()
     a = FEM(info[0], info[1]) 
-    a.setboundary()
-    a.setit()
-
-    b = a.calculate() 
-    print(b[-1]) 
-    for i in b: 
-        pass 
+    a.set_boundary()
+    a.set_it()
+    images = a.calculate()
+    domain = a.get_xs()
+    print(images[-1])
+    plt.plot(domain, images[-1])
+    plt.show()
