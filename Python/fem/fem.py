@@ -8,7 +8,7 @@ class FEM():
         self.dt = self.dx**2/2 
         self.dt = int(100000000*self.dt)/100000000 
         self.tal = self.dt/self.dx**2 
-        self.bound = [1, 0, 0] 
+        self.bound = [] 
         self.result = [] 
         self.it = 0
  
@@ -24,6 +24,7 @@ class FEM():
             elif type(e) == KeyboardInterrupt or type(e) == SystemExit:
                 print('')
                 exit(1)
+        print('bound ' +     str(self.bound))
 
     def set_it(self):
         try:
@@ -56,9 +57,10 @@ class FEM():
     
     def get_times(self):
         dt = self.dx**2/2
+        times = []
         for i in range(self.it):
             times.append(i*dt)
-        return times
+        return self.it
 
     def get_xs(self):
         x = []
@@ -84,8 +86,19 @@ if __name__ == '__main__':
     a = FEM(info[0], info[1]) 
     a.set_boundary()
     a.set_it()
+    it = a.get_times()
     images = a.calculate()
     domain = a.get_xs()
-    print(images[-1])
-    plt.plot(domain, images[-1])
-    plt.show()
+    print(images[0])
+    for i in range(it-1):
+        plt.plot(domain, images[i])
+        plt.ylim(0,1.5)
+        plt.xlabel('Comprimento')
+        plt.ylabel('Temperatura')
+        name = 'lala' + str(i) + '.jpg'
+        plt.savefig(name)
+        plt.clf()
+        plt.cla()
+        plt.close()
+
+
